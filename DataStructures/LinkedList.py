@@ -9,15 +9,39 @@ class LinkedList:
         self.centinel.setLeft(self.centinel)
 
     def __str__(self):
-        representation = ""
+        representation = "["
         node = self.centinel.getRight()
         for i in range(self.size):
             if (i + 1 < self.size):
-                representation += str(node.getValue()) + ","
+                representation += str(node.getValue()) + ", "
             else:
                 representation += str(node.getValue())
             node = node.getRight()
-        return representation
+        return representation + "]"
+
+    def __iter__(self):
+        node = self.centinel.getRight()
+        for _ in range(self.size):
+            yield node.getValue()
+            node = node.getRight()
+    
+    def __len__(self):
+        return self.size
+
+    def reverse(self):
+        first_node = self.centinel.getRight()
+        cent_clone = self.centinel.clone()
+        self.centinel.setRight(self.centinel.getLeft())
+
+        next = first_node
+        for _ in range(self.size):
+            clone = next.clone()
+
+            next.setRight(next.getLeft())
+            next.setLeft(clone.getRight())
+
+            next = clone.getRight()
+        self.centinel.setLeft(cent_clone.getRight())
 
     def pushValueLeft(self, value):
         newNode = Node(value)
@@ -88,15 +112,6 @@ class LinkedList:
         node.getRight.setLeft(node.getLeft())
         self.size -= 1
 
-    def getValues(self):
-        representation = []
-        node = self.centinel.getRight()
-        for i in range(self.size):
-            representation.append(node.getValue())
-            node = node.getRight()
-        return representation
-
-
 class Node:
 
     value = None
@@ -107,7 +122,13 @@ class Node:
         self.value = value
 
     def __str__(self):
-        return str(self.left) + " " + str(self.value) + " " + str(self.right)
+        return f"{self.getLeft().getValue()} <- {self.getValue()} -> {self.getRight().getValue()}"
+
+    def clone(self):
+        new_node = Node(self.getValue())
+        new_node.setLeft(self.getLeft())
+        new_node.setRight(self.getRight())
+        return new_node
 
     def setRight(self, right):
         self.right = right
